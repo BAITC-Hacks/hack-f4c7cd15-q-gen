@@ -1,2 +1,1 @@
-# hack-f4c7cd15-q-gen
-Hackathon team repository for Q.gen
+13.00-14.00 разбор кейса и начало работы 
