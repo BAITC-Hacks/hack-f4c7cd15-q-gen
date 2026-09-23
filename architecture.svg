@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<rect width="1280" height="720" fill="#0c1019"/>
+<style>text{font-family:Segoe UI,Arial,sans-serif;fill:#e9eef8}.title{font-size:34px;font-weight:700}.label{font-size:22px;font-weight:600}.body{font-size:17px;fill:#a9b9cc}.tag{font-size:14px;fill:#82e4b5}</style>
+<text x="60" y="66" class="tag">ПОТОК · HACKALEM AI</text><text x="60" y="115" class="title">От переводов — к обоснованному приоритету</text>
+<text x="60" y="153" class="body">Один локальный запуск: python run.py · данные и роли остаются проверяемыми</text>
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#82e4b5" stroke-width="2"/></marker></defs>
+<g fill="#151e2c" stroke="#33435a"><rect x="60" y="205" width="250" height="240" rx="15"/><rect x="360" y="205" width="250" height="240" rx="15"/><rect x="660" y="205" width="250" height="240" rx="15"/><rect x="960" y="205" width="250" height="240" rx="15"/></g>
+<g stroke="#82e4b5" stroke-width="2" marker-end="url(#a)"><path d="M310 325H347"/><path d="M610 325H647"/><path d="M910 325H947"/></g>
+<text x="80" y="245" class="label">01 Данные</text><text x="80" y="287" class="body">3 Parquet → DuckDB</text><text x="80" y="321" class="body">2 248 клиентов</text><text x="80" y="351" class="body">4 840 транзакций</text><text x="80" y="396" class="tag">Проверка сумм и связей</text>
+<text x="380" y="245" class="label">02 Признаки</text><text x="380" y="287" class="body">Обороты и контрагенты</text><text x="380" y="321" class="body">Seed, группы, циклы</text><text x="380" y="351" class="body">Сценарий 1–2 дня</text><text x="380" y="396" class="tag">SQL + NetworkX + Python</text>
+<text x="680" y="245" class="label">03 Гипотезы</text><text x="680" y="287" class="body">6 объяснимых ролей</text><text x="680" y="321" class="body">Кластеры и приоритет</text><text x="680" y="351" class="body">Проверка устойчивости</text><text x="680" y="396" class="tag">Числа → вклад → вывод</text>
+<text x="980" y="245" class="label">04 Аналитик</text><text x="980" y="287" class="body">Граф, поиск и карточка</text><text x="980" y="321" class="body">Три обязательных CSV</text><text x="980" y="351" class="body">Кого проверить первым</text><text x="980" y="396" class="tag">Почему + чего не хватает</text>
+<rect x="60" y="490" width="1150" height="145" rx="15" fill="#1c2430" stroke="#665639"/>
+<text x="85" y="531" class="label">Ограничения встроены в выводы</text><text x="85" y="571" class="body">Неполный вход seed · обрыв на 4-м шаге · порог 5 000 ₸ · нет размеченных ролей</text><text x="85" y="606" class="body">Роль — гипотеза. FIFO — сценарий. Приоритет — не вероятность виновности.</text>
+<text x="60" y="680" class="tag">ВОСПРОИЗВОДИМОСТЬ · ПРОЗРАЧНЫЕ ПРАВИЛА · ПРОВЕРКА ПО ИСХОДНЫМ ДАННЫМ</text>
+</svg>
