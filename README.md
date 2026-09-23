@@ -1,5 +1,4 @@
-![logo](<img width="1254" height="1254" alt="image" src="https://github.com/user-attachments/assets/a386721b-3a2b-4456-aead-380687641f5a" />
-)
+![logo](<img width="1254" height="1254" alt="image" src="https://github.com/user-attachments/assets/a386721b-3a2b-4456-aead-380687641f5a" />)
 
 # finanse — Поток: аналитика графа переводов
 
