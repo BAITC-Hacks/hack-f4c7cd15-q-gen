@@ -229,7 +229,7 @@ AGENT_TOOLS = [
     },
 ]
 
-DEFAULT_TOKEN = os.getenv("OPENAI_API_KEY", "FGCSBZ39VF5NLAFF")
+DEFAULT_TOKEN = os.getenv("OPENAI_API_KEY", "")
 
 
 # --- ЛОКАЛЬНЫЙ РЕЖИМ (FALLBACK) ---
@@ -379,6 +379,8 @@ def ask_aml_agent(
     на детерминированный локальный движок правил с вызовом тех же инструментов.
     """
     key = api_key or os.getenv("OPENAI_API_KEY") or DEFAULT_TOKEN
+    if not key:
+        return _local_reasoning_fallback(query)["answer"]
     b_url = base_url or os.getenv("OPENAI_BASE_URL")
 
     # Попытка вызова внешнего LLM API

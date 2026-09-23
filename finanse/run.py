@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parent
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--serve',action='store_true',help='Start local dashboard after computation')
-    parser.add_argument('--host',default='0.0.0.0',help='Host interface (default 0.0.0.0 for Firefox/Chrome dual-stack compatibility)')
+    parser.add_argument('--host',default='127.0.0.1',help='Host interface (default: localhost)')
     parser.add_argument('--port',type=int,default=8765)
     args=parser.parse_args()
     start=time.perf_counter()

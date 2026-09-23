@@ -24,8 +24,6 @@ ROUTES = {'/': ('home.html', 'text/html; charset=utf-8'),
           '/home.js': ('home.js', 'text/javascript; charset=utf-8'),
           '/routes.js': ('routes.js', 'text/javascript; charset=utf-8'),
           '/dashboard.js': ('dashboard.js', 'text/javascript; charset=utf-8'),
-          '/copilot': ('copilot.html', 'text/html; charset=utf-8'),
-          '/copilot.js': ('copilot.js', 'text/javascript; charset=utf-8'),
           '/api/analytics': ('out/dashboard.json', 'application/json; charset=utf-8')}
 for name in ('nodes_roles', 'clusters', 'top_nodes'):
     ROUTES['/download/' + name + '.csv'] = ('out/' + name + '.csv', 'text/csv; charset=utf-8')
@@ -35,6 +33,9 @@ ROUTES['/api/controls'] = ('out/control/report.json','application/json; charset=
 ROUTES['/controls-report'] = ('out/control/REPORT.md','text/plain; charset=utf-8')
 ROUTES['/case-study'] = ('CASE_STUDY.md','text/plain; charset=utf-8')
 
+ROUTES.update({'/graph': ('graph.html', 'text/html; charset=utf-8'), '/legacy-styles.css': ('legacy-styles.css', 'text/css; charset=utf-8'), '/ui/analytics.js': ('ui/analytics.js', 'text/javascript; charset=utf-8'), '/ui/card.js': ('ui/card.js', 'text/javascript; charset=utf-8'), '/ui/controls.js': ('ui/controls.js', 'text/javascript; charset=utf-8'), '/ui/data.js': ('ui/data.js', 'text/javascript; charset=utf-8'), '/ui/geometry.js': ('ui/geometry.js', 'text/javascript; charset=utf-8'), '/ui/graph.js': ('ui/graph.js', 'text/javascript; charset=utf-8'), '/ui/layout-core.js': ('ui/layout-core.js', 'text/javascript; charset=utf-8'), '/ui/layout-worker.js': ('ui/layout-worker.js', 'text/javascript; charset=utf-8'), '/ui/layout.js': ('ui/layout.js', 'text/javascript; charset=utf-8'), '/ui/legend.js': ('ui/legend.js', 'text/javascript; charset=utf-8'), '/ui/overview.js': ('ui/overview.js', 'text/javascript; charset=utf-8'), '/ui/routes-shell.js': ('ui/routes-shell.js', 'text/javascript; charset=utf-8'), '/ui/scene2d.js': ('ui/scene2d.js', 'text/javascript; charset=utf-8'), '/ui/scene3d.js': ('ui/scene3d.js', 'text/javascript; charset=utf-8'), '/ui/shell.js': ('ui/shell.js', 'text/javascript; charset=utf-8'), '/ui/state.js': ('ui/state.js', 'text/javascript; charset=utf-8'), '/ui/theme.css': ('ui/theme.css', 'text/css; charset=utf-8'), '/vendor/OrbitControls.js': ('vendor/OrbitControls.js', 'text/javascript; charset=utf-8'), '/vendor/three.core.js': ('vendor/three.core.js', 'text/javascript; charset=utf-8'), '/vendor/three.module.js': ('vendor/three.module.js', 'text/javascript; charset=utf-8')})
+
+ROUTES.update({"/copilot": ("copilot.html", "text/html; charset=utf-8"), "/copilot.js": ("copilot.js", "text/javascript; charset=utf-8")})
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):

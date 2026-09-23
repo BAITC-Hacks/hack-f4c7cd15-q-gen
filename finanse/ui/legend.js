@@ -1,0 +1,4 @@
+import {roles,roleColors,esc} from './data.js';
+export const clusterColor=id=>`hsl(${Number(id)*137.508%360} 42% 40%)`;
+export function nodeColor(n,state,neighbors){if(n.gid===state.gid)return '#15803d';if(state.gid)return neighbors.has(n.gid)?'#4a805a':'#cbd2cd';return state.color==='role'?roleColors[n.role]:state.color==='cluster'?clusterColor(n.cluster_id):'#242c27';}
+export function renderLegend(el,state,nodes){const entries=state.color==='role'?Object.entries(roles).map(([k,v])=>[roleColors[k],v]):state.color==='cluster'?[...new Set(nodes.map(n=>n.cluster_id))].sort((a,b)=>a-b).map(c=>[clusterColor(c),`Кластер ${c}`]):[['#242c27','Участник'],['#15803d','Выбранный клиент'],['#4a805a','Его окружение']];el.innerHTML=entries.map(([c,t])=>`<span><i style="background:${c}"></i>${esc(t)}</span>`).join('')+'<span>◯ Seed</span><span>◇ Граница наблюдения</span>';}

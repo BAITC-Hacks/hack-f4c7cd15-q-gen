@@ -99,17 +99,6 @@ def serve_routes():
     return HTMLResponse(path.read_text(encoding="utf-8"))
 
 
-@router.get("/copilot", response_class=HTMLResponse, include_in_schema=False)
-def serve_copilot():
-    path = ROOT / "copilot.html"
-    return HTMLResponse(path.read_text(encoding="utf-8"))
-
-
-@router.get("/copilot.js", include_in_schema=False)
-def serve_copilot_js():
-    return FileResponse(str(ROOT / "copilot.js"), media_type="text/javascript; charset=utf-8")
-
-
 @router.get("/styles.css", include_in_schema=False)
 def serve_css():
     return FileResponse(str(ROOT / "styles.css"), media_type="text/css; charset=utf-8")
@@ -217,3 +206,10 @@ def download_file(filename: str):
     )
 
 
+
+# Integrated graph frontend assets (explicit allowlist).
+for url, (relative, media) in {'/graph': ('graph.html', 'text/html; charset=utf-8'), '/legacy-styles.css': ('legacy-styles.css', 'text/css; charset=utf-8'), '/ui/analytics.js': ('ui/analytics.js', 'text/javascript; charset=utf-8'), '/ui/card.js': ('ui/card.js', 'text/javascript; charset=utf-8'), '/ui/controls.js': ('ui/controls.js', 'text/javascript; charset=utf-8'), '/ui/data.js': ('ui/data.js', 'text/javascript; charset=utf-8'), '/ui/geometry.js': ('ui/geometry.js', 'text/javascript; charset=utf-8'), '/ui/graph.js': ('ui/graph.js', 'text/javascript; charset=utf-8'), '/ui/layout-core.js': ('ui/layout-core.js', 'text/javascript; charset=utf-8'), '/ui/layout-worker.js': ('ui/layout-worker.js', 'text/javascript; charset=utf-8'), '/ui/layout.js': ('ui/layout.js', 'text/javascript; charset=utf-8'), '/ui/legend.js': ('ui/legend.js', 'text/javascript; charset=utf-8'), '/ui/overview.js': ('ui/overview.js', 'text/javascript; charset=utf-8'), '/ui/routes-shell.js': ('ui/routes-shell.js', 'text/javascript; charset=utf-8'), '/ui/scene2d.js': ('ui/scene2d.js', 'text/javascript; charset=utf-8'), '/ui/scene3d.js': ('ui/scene3d.js', 'text/javascript; charset=utf-8'), '/ui/shell.js': ('ui/shell.js', 'text/javascript; charset=utf-8'), '/ui/state.js': ('ui/state.js', 'text/javascript; charset=utf-8'), '/ui/theme.css': ('ui/theme.css', 'text/css; charset=utf-8'), '/vendor/OrbitControls.js': ('vendor/OrbitControls.js', 'text/javascript; charset=utf-8'), '/vendor/three.core.js': ('vendor/three.core.js', 'text/javascript; charset=utf-8'), '/vendor/three.module.js': ('vendor/three.module.js', 'text/javascript; charset=utf-8')}.items():
+    add_asset(url, relative, media)
+
+add_asset("/copilot", "copilot.html", "text/html")
+add_asset("/copilot.js", "copilot.js", "text/javascript")
