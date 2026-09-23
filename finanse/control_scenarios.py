@@ -32,6 +32,25 @@ def run(destination):
     scenario('Обрезанная граница','peripheral','Отсутствие выхода на глубине 4 не означает конечного получателя',[(1,10000)],[],depth=4)
     scenario('Получатель внутри выборки','terminal','Один вход без выхода; не seed и не граница',[(1,10000)],[],depth=2)
     scenario('Изолированный клиент','peripheral','Нет наблюдаемых операций',[],[])
+    # Identical bridge topology, differing only in presence of two upstream seeds.
+    for center, has_seeds in ((2000, True), (2100, False)):
+        nodes.append((center, 2, False))
+        groups = [list(range(center+10+k*10, center+15+k*10)) for k in range(3)]
+        for k, group in enumerate(groups):
+            for i, gid in enumerate(group):
+                nodes.append((gid, 1, has_seeds and k<2 and i==0))
+            for src in group:
+                for dst in group:
+                    if src != dst:
+                        transactions.append((src,dst,'2026-07-01',100000))
+        for src in groups[0][:3]+groups[1][:2]:
+            transactions.append((src,center,'2026-07-02',10000))
+        for dst in groups[2]:
+            transactions.append((center,dst,'2026-07-03',10000))
+        cases.append(dict(name='Мост между группами' if has_seeds else 'Такой же мост без seed',
+            gid=str(center),expected='coordinator' if has_seeds else 'transit',
+            reason='5 входов и 5 выходов; три плотные группы; '+('два upstream seed' if has_seeds else 'нет достижимости от seed — степень сама по себе не даёт coordinator'),
+            expected_fast=1,expected_seed=2 if has_seeds else 0))
     with duckdb.connect() as db:
         db.execute('CREATE TABLE nodes(gid BIGINT,depth BIGINT,is_seed BOOLEAN)')
         db.executemany('INSERT INTO nodes VALUES (?,?,?)',nodes)
@@ -45,10 +64,13 @@ def run(destination):
     actual={n['gid']:n for n in result['nodes']}
     for case in cases:
         node=actual[case['gid']]
-        case.update(actual=node['role'],fast_share=node['fast_share'],evidence=node['evidence'])
+        case.update(actual=node['role'],fast_share=node['fast_share'],evidence=node['evidence'],
+                    seed_reach=node['seed_reach'],neighbor_clusters=node['neighbor_clusters'])
         case['passed']=case['actual']==case['expected'] and (case['expected_fast'] is None or abs(case['fast_share']-case['expected_fast'])<1e-9)
+        if 'expected_seed' in case:
+            case['passed'] = case['passed'] and node['seed_reach']==case['expected_seed'] and node['neighbor_clusters']>=2
     report=dict(passed=sum(c['passed'] for c in cases),total=len(cases),cases=cases,
-        limitation='Синтетические контрольные примеры проверяют реализацию правил, а не точность ролей на реальных клиентах. Пороги выбраны авторами; координатор и качество кластеризации этим набором не оцениваются.')
+        limitation='Синтетические контрольные примеры проверяют реализацию правил всех шести ролей, а не точность на реальных клиентах. Пороги выбраны авторами; качество кластеризации на реальных данных и экспертная полезность независимо не оценивались.')
     (destination/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     lines=['# Контрольные сценарии', '', report['limitation'], '',
            '| Сценарий | Ожидаемая роль | Полученная роль | Проверка |','|---|---|---|---|']

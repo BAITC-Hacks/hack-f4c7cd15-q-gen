@@ -5,6 +5,7 @@ import argparse
 import json
 from urllib.parse import urlsplit, parse_qs
 from route_search import query_chain, example_chain
+from review_export import export_review
 
 ROOT = Path(__file__).resolve().parent
 ROUTES = {'/': ('home.html', 'text/html; charset=utf-8'),
@@ -26,6 +27,25 @@ ROUTES['/case-study'] = ('CASE_STUDY.md','text/plain; charset=utf-8')
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        if urlsplit(self.path).path == '/download/review.csv':
+            try:
+                params=parse_qs(urlsplit(self.path).query)
+                analytics=json.loads((ROOT/'out/dashboard.json').read_text(encoding='utf-8'))
+                payload=export_review(analytics,params.get('gid',[])).encode('utf-8')
+            except ValueError as error:
+                self.send_error(400, 'Invalid selection')
+                return
+            except OSError:
+                self.send_error(503, 'Run python run.py first')
+                return
+            self.send_response(200)
+            self.send_header('Content-Type','text/csv; charset=utf-8')
+            self.send_header('Content-Disposition','attachment; filename="review.csv"')
+            self.send_header('Content-Length',str(len(payload)))
+            self.send_header('Cache-Control','no-store')
+            self.end_headers()
+            self.wfile.write(payload)
+            return
         if urlsplit(self.path).path in ('/api/routes', '/api/route-example'):
             try:
                 params = {k: v[0] for k, v in parse_qs(urlsplit(self.path).query).items()}

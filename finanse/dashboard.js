@@ -4,6 +4,8 @@ const fmt=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(n);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 let data,byId,filtered=[],page=0,selected=null;
+let reviewSet=new Set();
+try{const saved=JSON.parse(sessionStorage.getItem('potok-review')||'[]');if(Array.isArray(saved))reviewSet=new Set(saved.filter(x=>typeof x==='string').slice(0,50));}catch{}
 function render(){
   const q=$('search').value.trim(),role=$('role').value,cluster=$('cluster').value,boundary=$('boundary').value;
   filtered=data.nodes.filter(n=>n.gid.includes(q)&&(!role||n.role===role)&&(cluster===''||String(n.cluster_id)===cluster)&&(boundary!=='exclude'||!n.truncated_by_depth)&&(boundary!=='only'||n.truncated_by_depth));
@@ -39,6 +41,7 @@ function detail(gid,scroll=true){
   $('temporal-table').innerHTML=windows.length?windows.map(m=>`<tr><td>${m.in_date}</td><td>${m.out_date}</td><td>${m.lag_days}</td><td>${fmt(m.amount_tiyn/100)}</td></tr>`).join(''):'<tr><td colspan="4">Нет сопоставлений через 1–2 дня</td></tr>';
   const edges=data.edges.filter(e=>e.src===gid||e.dst===gid).sort((a,b)=>b.sum_kzt-a.sum_kzt);
   $('connections').innerHTML=edges.map(e=>`<tr data-gid="${e.src===gid?e.dst:e.src}" tabindex="0"><td>${e.src}</td><td>→ ${e.dst}</td><td>${fmt(e.sum_kzt)}</td><td>${e.n_tx}</td></tr>`).join('')||'<tr><td colspan="4">Наблюдаемых связей нет</td></tr>';
+  $('review-add').textContent=reviewSet.has(gid)?'Убрать из списка проверки':'Добавить в список проверки';
   drawGraph();if(scroll)$('details').scrollIntoView({behavior:'smooth',block:'start'});
 }
 async function init(){try{
@@ -52,6 +55,7 @@ async function init(){try{
   $('clusters').innerHTML=[...data.clusters].sort((a,b)=>b.sum_kzt_internal-a.sum_kzt_internal).map(c=>`<tr><td>${c.cluster_id}</td><td>${c.n_nodes}</td><td>${c.n_seed}</td><td>${fmt(c.sum_kzt_internal)}</td><td class="wrap">${esc(c.hypothesis)}</td></tr>`).join('');
   $('demo-cases').innerHTML=data.demo.map(d=>`<button data-gid="${d.gid}"><strong style="color:${colors[d.role]}">${labels[d.role]}</strong><br><small>${d.gid}</small><p>${esc(d.evidence)}</p></button>`).join('');
   $('resilience').innerHTML=data.resilience.map(r=>`<tr><td>Топ-${r.removed_count}</td><td>${r.baseline_largest} → ${r.largest_component}</td><td>${r.components}</td><td>${r.isolates}</td><td>${fmt(r.random_largest_median)} (${r.random_largest_min}–${r.random_largest_max})</td></tr>`).join('');
+  reviewSet=new Set([...reviewSet].filter(id=>byId.has(id)));renderReview();
   render();
   const requested=new URLSearchParams(location.search).get('gid');
   if(requested&&byId.has(requested))detail(requested);
@@ -68,4 +72,15 @@ init();
 (async()=>{try{const res=await fetch('/api/controls');if(!res.ok)throw Error('Контрольные сценарии ещё не рассчитаны: python control_scenarios.py');const report=await res.json();$('control-count').textContent=`${report.passed} из ${report.total} проверок пройдено · раскрыть`;$('control-rows').innerHTML=report.cases.map(c=>`<tr><td>${esc(c.name)}</td><td>${labels[c.expected]}</td><td>${labels[c.actual]}</td><td style="color:${c.passed?'#91ebbd':'#ffb3b3'}">${c.passed?'PASS':'FAIL'}</td><td class="wrap">${esc(c.reason)}</td></tr>`).join('');$('control-limits').textContent=report.limitation;}catch(e){$('control-count').textContent='Нет отчёта';$('control-limits').textContent=e.message;}})();
 function openAnchor(){const target=document.getElementById(location.hash.slice(1));if(target){if(target.tagName==='DETAILS')target.open=true;const parent=target.closest('details');if(parent)parent.open=true;}}
 window.addEventListener('hashchange',openAnchor);openAnchor();
+
+function renderReview(){
+ const nodes=[...reviewSet].map(id=>byId.get(id)).filter(Boolean).sort((a,b)=>b.priority_score-a.priority_score);
+ $('review-count').textContent=`Выбрано: ${nodes.length}`;$('review-export').disabled=!nodes.length;
+ $('review-rows').innerHTML=nodes.map(n=>`<tr><td><button data-open-review="${n.gid}">${n.gid}</button></td><td>${labels[n.role]}</td><td>${n.priority_score.toFixed(3)}</td><td><button data-remove-review="${n.gid}" aria-label="Убрать клиента ${n.gid}">Убрать</button></td></tr>`).join('')||'<tr><td colspan="4">Откройте карточку клиента и добавьте его в список.</td></tr>';
+ try{sessionStorage.setItem('potok-review',JSON.stringify([...reviewSet]));}catch{$('review-status').textContent='Браузер не сохраняет выбор; выгрузите CSV до перехода на другую страницу.';}
+ if(selected)$('review-add').textContent=reviewSet.has(selected)?'Убрать из списка проверки':'Добавить в список проверки';
+}
+$('review-add').onclick=()=>{if(!selected)return;if(reviewSet.has(selected)){reviewSet.delete(selected);$('review-status').textContent='Клиент удалён из списка.';}else{if(reviewSet.size>=50){$('review-status').textContent='В списке уже 50 клиентов. Уберите лишних перед добавлением.';$('review-panel').open=true;$('review-panel').scrollIntoView();return;}reviewSet.add(selected);$('review-status').textContent='Клиент добавлен в список проверки.';}renderReview();};
+$('review-rows').onclick=e=>{const remove=e.target.closest('[data-remove-review]'),open=e.target.closest('[data-open-review]');if(remove){reviewSet.delete(remove.dataset.removeReview);renderReview();}if(open)detail(open.dataset.openReview);};
+$('review-export').onclick=()=>{if(!reviewSet.size)return;const query=new URLSearchParams();[...reviewSet].forEach(id=>query.append('gid',id));const a=document.createElement('a');a.href='/download/review.csv?'+query;a.download='review.csv';document.body.append(a);a.click();a.remove();};
 
