@@ -29,7 +29,9 @@ if __name__=='__main__':
     (ROOT/'out/run_validation.json').write_text(json.dumps(checks,indent=2),encoding='utf-8')
     print(json.dumps(checks))
     if args.serve:
-        from serve import Handler,ThreadingHTTPServer
-        print(f'Open http://127.0.0.1:{args.port}',flush=True)
-        ThreadingHTTPServer(('127.0.0.1',args.port),Handler).serve_forever()
+        import uvicorn
+        print(f'Starting MoneyGraph AML Intelligence API & Dashboard on http://127.0.0.1:{args.port}', flush=True)
+        print(f'Interactive Swagger Docs: http://127.0.0.1:{args.port}/docs', flush=True)
+        print(f'Interactive Dashboard UI: http://127.0.0.1:{args.port}/analytics', flush=True)
+        uvicorn.run("api.app:app", host="127.0.0.1", port=args.port)
 
