@@ -1,3 +1,6 @@
+![logo](<img width="1254" height="1254" alt="image" src="https://github.com/user-attachments/assets/995483e2-05f9-4a83-9260-bf227f9f0b48" />
+)
+
 # finanse — Поток: аналитика графа переводов
 
 **[Скачать finanse.zip](./finanse.zip)** — весь проект отдельным архивом: 64 файла, около 1,31 МБ. Распакуйте архив и откройте папку `finanse`; команды ниже выполняются в ней.
