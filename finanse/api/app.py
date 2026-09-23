@@ -13,6 +13,7 @@ from api.routes import (
     targets_router,
     trace_router,
     legacy_router,
+    copilot_router,
 )
 from core.engine import AMLEngine
 
@@ -67,6 +68,7 @@ def create_app() -> FastAPI:
     app.include_router(targets_router)
     app.include_router(trace_router)
     app.include_router(legacy_router)
+    app.include_router(copilot_router)
 
     return app
 

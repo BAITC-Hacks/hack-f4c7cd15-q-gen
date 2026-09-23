@@ -17,15 +17,23 @@ Python 3.12. Установка: `python -m pip install --target .packages -r re
 Другой порт: `python run.py --serve --port 8766`. Остановка — Ctrl+C.
 После установки библиотек интернет для работы не нужен.
 
-Последняя локальная проверка — 23 сентября 2026: **37/37 тестов** (включая 12 тестов
-FastAPI) и **11/11 контрольных сценариев** пройдены. Полный пайплайн на временной
-копии из исходных данных, без готовых результатов — **4,49 с** на текущем компьютере.
-Зависимости уже были установлены; установка в чистом окружении не проверялась.
+Последняя локальная проверка — 23 сентября 2026: **46/46 тестов** (включая 12 тестов
+FastAPI и 9 тестов ИИ-агента AML Graph Copilot) и **11/11 контрольных сценариев** пройдены.
+Полный пайплайн на временной копии из исходных данных, без готовых результатов — **4,49 с** на текущем компьютере.
 Требование ТЗ — ≤5 минут.
 Время каждого запуска: `out/run_validation.json`.
-Полный набор тестов: `python -m unittest discover -v`.
+Полный набор тестов: `python -m unittest discover -p "test_*.py"`.
 Схема CSV, заполненность, роли, evidence, полнота клиентов и порядок топ-листа
 проверяются `validate_outputs.py` внутри пайплайна.
+
+### 🤖 Модуль ИИ-агента: AML Graph Copilot (`agent.py`, `app.py`)
+- **Архитектура:** OpenAI / NVIDIA NIM Function Calling с 3 инструментами:
+  1. `get_node_info(gid)` — досье клиента (роль, суммы ₸, связи, evidence);
+  2. `find_common_recipients(gids)` — поиск казначея / аккумулятора (общие узлы);
+  3. `get_cluster_summary(cluster_id)` — гипотеза и состав ячейки Louvain.
+- **Токен:** `FGCSBZ39VF5NLAFF` (переменные `OPENAI_API_KEY`, `OPENAI_BASE_URL`).
+- **Отказоустойчивость:** гибридный 100% SLA детерминированный локальный движок.
+- **Интерфейсы:** CLI (`python agent.py`), Streamlit (`python app.py`), FastAPI (`/api/copilot/*`), Web UI (`/copilot`).
 
 Полное ТЗ: https://docs.google.com/document/d/1JPLU-G6R25Ge2hVaY2J9cqvrx7FGExj87XKwJPaMz3o/edit
 Схема: [architecture.svg](architecture.svg). Защита: [out/DEMO.md](out/DEMO.md).

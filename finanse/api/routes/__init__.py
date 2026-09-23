@@ -6,6 +6,7 @@ from api.routes.clusters import router as clusters_router
 from api.routes.targets import router as targets_router
 from api.routes.trace import router as trace_router
 from api.routes.legacy import router as legacy_router
+from api.routes.copilot import router as copilot_router
 
 __all__ = [
     "overview_router",
@@ -15,4 +16,5 @@ __all__ = [
     "targets_router",
     "trace_router",
     "legacy_router",
+    "copilot_router",
 ]

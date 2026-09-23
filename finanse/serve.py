@@ -24,6 +24,8 @@ ROUTES = {'/': ('home.html', 'text/html; charset=utf-8'),
           '/home.js': ('home.js', 'text/javascript; charset=utf-8'),
           '/routes.js': ('routes.js', 'text/javascript; charset=utf-8'),
           '/dashboard.js': ('dashboard.js', 'text/javascript; charset=utf-8'),
+          '/copilot': ('copilot.html', 'text/html; charset=utf-8'),
+          '/copilot.js': ('copilot.js', 'text/javascript; charset=utf-8'),
           '/api/analytics': ('out/dashboard.json', 'application/json; charset=utf-8')}
 for name in ('nodes_roles', 'clusters', 'top_nodes'):
     ROUTES['/download/' + name + '.csv'] = ('out/' + name + '.csv', 'text/csv; charset=utf-8')

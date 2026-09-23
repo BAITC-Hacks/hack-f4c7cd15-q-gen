@@ -99,6 +99,17 @@ def serve_routes():
     return HTMLResponse(path.read_text(encoding="utf-8"))
 
 
+@router.get("/copilot", response_class=HTMLResponse, include_in_schema=False)
+def serve_copilot():
+    path = ROOT / "copilot.html"
+    return HTMLResponse(path.read_text(encoding="utf-8"))
+
+
+@router.get("/copilot.js", include_in_schema=False)
+def serve_copilot_js():
+    return FileResponse(str(ROOT / "copilot.js"), media_type="text/javascript; charset=utf-8")
+
+
 @router.get("/styles.css", include_in_schema=False)
 def serve_css():
     return FileResponse(str(ROOT / "styles.css"), media_type="text/css; charset=utf-8")
