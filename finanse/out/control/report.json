@@ -1,0 +1,106 @@
+{
+  "passed": 9,
+  "total": 9,
+  "cases": [
+    {
+      "name": "Сбор с удержанием",
+      "gid": "1000",
+      "expected": "consolidator",
+      "reason": "4 отправителя; выход составляет 25% входа",
+      "expected_fast": null,
+      "actual": "consolidator",
+      "fast_share": 0.25,
+      "evidence": "in=4/40000 KZT; out=1/10000 KZT; tx=4/1; d=1; сбор; выход 25% наблюдаемого входа",
+      "passed": true
+    },
+    {
+      "name": "Распределение",
+      "gid": "1100",
+      "expected": "distributor",
+      "reason": "Один вход и шесть разных получателей",
+      "expected_fast": null,
+      "actual": "distributor",
+      "fast_share": 1.0,
+      "evidence": "in=1/60000 KZT; out=6/60000 KZT; tx=1/6; d=1; рассылка многим получателям",
+      "passed": true
+    },
+    {
+      "name": "Транзит на следующий день",
+      "gid": "1200",
+      "expected": "transit",
+      "reason": "90% входа выходит на следующий день",
+      "expected_fast": 0.9,
+      "actual": "transit",
+      "fast_share": 0.9,
+      "evidence": "in=1/20000 KZT; out=1/18000 KZT; tx=1/1; d=1; вход≈выход; сценарий 1–2д 90% входа",
+      "passed": true
+    },
+    {
+      "name": "Операции одного дня",
+      "gid": "1300",
+      "expected": "peripheral",
+      "reason": "Порядок внутри дня неизвестен; транзит не подтверждается",
+      "expected_fast": 0,
+      "actual": "peripheral",
+      "fast_share": 0.0,
+      "evidence": "in=1/20000 KZT; out=1/18000 KZT; tx=1/1; d=1; недостаточно признаков других ролей",
+      "passed": true
+    },
+    {
+      "name": "Выход через четыре дня",
+      "gid": "1400",
+      "expected": "peripheral",
+      "reason": "Баланс похож на транзит, но окно 1–2 дня нарушено",
+      "expected_fast": 0,
+      "actual": "peripheral",
+      "fast_share": 0.0,
+      "evidence": "in=1/20000 KZT; out=1/18000 KZT; tx=1/1; d=1; недостаточно признаков других ролей",
+      "passed": true
+    },
+    {
+      "name": "Неполный вход seed",
+      "gid": "1500",
+      "expected": "peripheral",
+      "reason": "Даже при временном совпадении роль транзита у seed отключена",
+      "expected_fast": 0.9,
+      "actual": "peripheral",
+      "fast_share": 0.9,
+      "evidence": "in=1/20000 KZT; out=1/18000 KZT; tx=1/1; d=1; недостаточно признаков других ролей",
+      "passed": true
+    },
+    {
+      "name": "Обрезанная граница",
+      "gid": "1600",
+      "expected": "peripheral",
+      "reason": "Отсутствие выхода на глубине 4 не означает конечного получателя",
+      "expected_fast": null,
+      "actual": "peripheral",
+      "fast_share": 0.0,
+      "evidence": "in=1/10000 KZT; out=0/0 KZT; tx=1/0; d=4; граница выгрузки; роль неизвестна",
+      "passed": true
+    },
+    {
+      "name": "Получатель внутри выборки",
+      "gid": "1700",
+      "expected": "terminal",
+      "reason": "Один вход без выхода; не seed и не граница",
+      "expected_fast": null,
+      "actual": "terminal",
+      "fast_share": 0.0,
+      "evidence": "in=1/10000 KZT; out=0/0 KZT; tx=1/0; d=2; нет выхода в наблюдаемой выборке",
+      "passed": true
+    },
+    {
+      "name": "Изолированный клиент",
+      "gid": "1800",
+      "expected": "peripheral",
+      "reason": "Нет наблюдаемых операций",
+      "expected_fast": null,
+      "actual": "peripheral",
+      "fast_share": 0.0,
+      "evidence": "in=0/0 KZT; out=0/0 KZT; tx=0/0; d=1; нет наблюдаемых связей",
+      "passed": true
+    }
+  ],
+  "limitation": "Синтетические контрольные примеры проверяют реализацию правил, а не точность ролей на реальных клиентах. Пороги выбраны авторами; координатор и качество кластеризации этим набором не оцениваются."
+}
