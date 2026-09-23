@@ -33,5 +33,5 @@ if __name__=='__main__':
         print(f'Starting MoneyGraph AML Intelligence API & Dashboard on http://127.0.0.1:{args.port}', flush=True)
         print(f'Interactive Swagger Docs: http://127.0.0.1:{args.port}/docs', flush=True)
         print(f'Interactive Dashboard UI: http://127.0.0.1:{args.port}/analytics', flush=True)
-        uvicorn.run("api.app:app", host="127.0.0.1", port=args.port)
+        uvicorn.run("api.app:app", host="0.0.0.0", port=args.port)
 
