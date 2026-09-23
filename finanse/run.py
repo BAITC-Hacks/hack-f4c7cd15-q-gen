@@ -13,6 +13,7 @@ ROOT=Path(__file__).resolve().parent
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--serve',action='store_true',help='Start local dashboard after computation')
+    parser.add_argument('--host',default='0.0.0.0',help='Host interface (default 0.0.0.0 for Firefox/Chrome dual-stack compatibility)')
     parser.add_argument('--port',type=int,default=8765)
     args=parser.parse_args()
     start=time.perf_counter()
@@ -35,4 +36,4 @@ if __name__=='__main__':
     if args.serve:
         import uvicorn
         print(f'Open http://127.0.0.1:{args.port} (API docs: /docs)',flush=True)
-        uvicorn.run('api.app:app',host='127.0.0.1',port=args.port)
+        uvicorn.run('api.app:app',host=args.host,port=args.port)
