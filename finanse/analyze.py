@@ -206,4 +206,3 @@ if __name__ == '__main__':
     parser.add_argument('--out', type=Path, default=ROOT / 'out')
     args = parser.parse_args()
     run(args.data, args.out)
-

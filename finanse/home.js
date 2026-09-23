@@ -11,4 +11,3 @@ const num=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(n);
  for(const [id,[x,y]]of Object.entries(pos))svg+=`<circle cx="${x}" cy="${y}" r="${id===center.gid?20:7}" fill="${id===center.gid?'#82e4b5':'#929cf7'}"><title>${id}</title></circle>`;
  document.getElementById('hero-network').innerHTML=svg;document.getElementById('hero-caption').textContent=`Клиент ${center.gid} · ${edges.length} крупнейших связей`;
 }catch(e){document.getElementById('error').textContent=e.message;document.getElementById('home-period').textContent='Данные пока недоступны';}})();
-

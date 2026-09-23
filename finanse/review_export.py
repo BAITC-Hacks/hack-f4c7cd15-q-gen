@@ -25,4 +25,3 @@ def export_review(analytics, gids):
         row['limitation']='Роль — гипотеза; score не является вероятностью виновности; клиент выбран аналитиком'
         writer.writerow(row)
     return '\ufeff'+output.getvalue()
-

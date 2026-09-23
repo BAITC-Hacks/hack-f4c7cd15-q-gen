@@ -11,4 +11,3 @@ form.addEventListener('submit',async e=>{e.preventDefault();const button=documen
  statusEl.textContent='Даты возрастают на каждом шаге. Показана одна из кратчайших цепочек в заданных пределах.';
  }catch(e){statusEl.textContent=e.message;}finally{button.disabled=false;}});
 (async()=>{try{const res=await fetch('/api/route-example');if(!res.ok)return;const r=await res.json();if(!r.source)return;const b=document.getElementById('example-route');b.disabled=false;b.onclick=()=>{form.elements.source.value=r.source;form.elements.target.value=r.target;form.elements.hops.value='4';form.elements.gap.value='2';form.elements.start.value='';form.elements.end.value='';statusEl.textContent='Пример подставлен из операций выборки. Нажмите «Найти цепочку».';resultEl.hidden=true;};}catch{}})();
-

@@ -9,4 +9,3 @@ SELECT gid, in_tx, in_kzt FROM client_turnover ORDER BY in_tiyn DESC LIMIT 20;
 
 -- Full history of one client; bind :gid as a parameter in Python.
 SELECT * FROM transactions WHERE src=:gid OR dst=:gid ORDER BY date, transaction_id;
-

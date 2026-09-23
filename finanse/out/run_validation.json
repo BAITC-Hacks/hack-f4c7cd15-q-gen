@@ -4,5 +4,5 @@
   "top_nodes": 50,
   "schema": "OK",
   "control_scenarios_passed": 11,
-  "full_pipeline_seconds": 5.475
+  "full_pipeline_seconds": 1.843
 }

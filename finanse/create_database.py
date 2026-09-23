@@ -127,4 +127,3 @@ if __name__ == '__main__':
     parser.add_argument('--db',type=Path,default=ROOT/'database/bank.sqlite3')
     args = parser.parse_args()
     create(args.data,args.db)
-

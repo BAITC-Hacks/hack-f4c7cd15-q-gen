@@ -143,4 +143,3 @@ def cluster_description(group,members,edges):
                       f"seed={sum(r['is_seed'] for r in members)}. Назначение неизвестно.")
     return dict(hypothesis=hypothesis,internal_share=internal_share,
                 top_sender_share=source_share,top_recipient_share=target_share,cross_kzt=cross)
-

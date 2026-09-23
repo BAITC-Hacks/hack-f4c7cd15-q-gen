@@ -86,4 +86,3 @@ def run(destination):
 if __name__=='__main__':
     report=run(Path(__file__).resolve().parent/'out/control')
     print(f"Controls: {report['passed']}/{report['total']} passed")
-

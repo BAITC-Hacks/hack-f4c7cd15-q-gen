@@ -35,6 +35,8 @@ function drawGraph(){
 }
 function detail(gid,scroll=true){
   selected=gid;const n=byId.get(gid);$('details').classList.add('visible');$('details').open=true;
+  $('client-report').href='/report?gid='+encodeURIComponent(gid);
+  $('client-weekly').href='/weekly?gid='+encodeURIComponent(gid);
   $('detail-title').textContent=`Клиент ${gid} · ${labels[n.role]}`;
   $('detail-text').innerHTML=`<strong>Почему эта роль:</strong> ${esc(n.evidence)}<br><strong>Почему такой приоритет:</strong> ${esc(n.priority_evidence)}<br>Сила правила: ${n.role_score.toFixed(2)}. Устойчивость роли при трёх настройках порогов: ${(n.role_stability*100).toFixed(0)}%. Это не вероятность виновности.<br>Достижим от ${n.seed_reach} разных seed за ≤4 шага; соседние внешние группы: ${n.neighbor_clusters}. Активных дней: ${n.active_days}.<br><strong>Сценарий транзита 1–2 дня:</strong> ${fmt(n.fast_matched_kzt)} ₸ (${(n.fast_share*100).toFixed(1)}% наблюдаемого входа), ${n.fast_windows} сопоставлений дней. Каждая сумма распределяется один раз; переводы одного дня не упорядочиваются.<br><strong>Что запросить:</strong> ${n.truncated_by_depth?'продолжение исходящих переводов за четвёртым шагом':n.is_seed?'полную историю входящих переводов seed':'точное время, назначение переводов и операции вне выборки'}.`;
   const windows=data.temporal_matches.filter(m=>m.gid===gid).sort((a,b)=>b.amount_tiyn-a.amount_tiyn).slice(0,8);
@@ -83,4 +85,3 @@ function renderReview(){
 $('review-add').onclick=()=>{if(!selected)return;if(reviewSet.has(selected)){reviewSet.delete(selected);$('review-status').textContent='Клиент удалён из списка.';}else{if(reviewSet.size>=50){$('review-status').textContent='В списке уже 50 клиентов. Уберите лишних перед добавлением.';$('review-panel').open=true;$('review-panel').scrollIntoView();return;}reviewSet.add(selected);$('review-status').textContent='Клиент добавлен в список проверки.';}renderReview();};
 $('review-rows').onclick=e=>{const remove=e.target.closest('[data-remove-review]'),open=e.target.closest('[data-open-review]');if(remove){reviewSet.delete(remove.dataset.removeReview);renderReview();}if(open)detail(open.dataset.openReview);};
 $('review-export').onclick=()=>{if(!reviewSet.size)return;const query=new URLSearchParams();[...reviewSet].forEach(id=>query.append('gid',id));const a=document.createElement('a');a.href='/download/review.csv?'+query;a.download='review.csv';document.body.append(a);a.click();a.remove();};
-

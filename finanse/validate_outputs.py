@@ -64,4 +64,3 @@ def validate(data,out):
 
 if __name__=='__main__':
     print(validate(ROOT/'data',ROOT/'out'))
-

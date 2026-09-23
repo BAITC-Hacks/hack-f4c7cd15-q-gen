@@ -71,4 +71,3 @@ def example_chain(db_path):
           AND NOT EXISTS (SELECT 1 FROM transactions c WHERE c.src=a.src AND c.dst=b.dst)
           ORDER BY MIN(a.amount_tiyn,b.amount_tiyn) DESC,a.src,b.dst LIMIT 1''').fetchone()
     return {'source': str(row[0]), 'target': str(row[1])} if row else {}
-

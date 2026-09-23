@@ -21,6 +21,10 @@ if __name__=='__main__':
         create(ROOT/'data', ROOT/'database/bank.sqlite3')
     analyze(ROOT/'data',ROOT/'out')
     research(ROOT/'out/analytics.duckdb',ROOT/'out/research')
+    from weekly_analytics import run as weekly
+    weekly(ROOT/'out/analytics.duckdb',ROOT/'out/weekly.json')
+    from recurring_patterns import run as recurring
+    recurring(ROOT/'out/analytics.duckdb',ROOT/'out/patterns.json')
     checks=validate(ROOT/'data',ROOT/'out')
     from control_scenarios import run as controls
     control_report=controls(ROOT/'out/control')
@@ -30,8 +34,5 @@ if __name__=='__main__':
     print(json.dumps(checks))
     if args.serve:
         import uvicorn
-        print(f'Starting MoneyGraph AML Intelligence API & Dashboard on http://127.0.0.1:{args.port}', flush=True)
-        print(f'Interactive Swagger Docs: http://127.0.0.1:{args.port}/docs', flush=True)
-        print(f'Interactive Dashboard UI: http://127.0.0.1:{args.port}/analytics', flush=True)
-        uvicorn.run("api.app:app", host="0.0.0.0", port=args.port)
-
+        print(f'Open http://127.0.0.1:{args.port} (API docs: /docs)',flush=True)
+        uvicorn.run('api.app:app',host='127.0.0.1',port=args.port)

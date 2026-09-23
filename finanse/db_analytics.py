@@ -178,4 +178,3 @@ if __name__ == '__main__':
     ap.add_argument('--out',type=Path,default=ROOT/'out/research')
     args = ap.parse_args()
     run(args.db,args.out)
-

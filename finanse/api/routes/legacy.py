@@ -55,31 +55,6 @@ def get_route_example():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/download/{filename}", summary="Download Export File")
-def download_file(filename: str):
-    allowed_files = {
-        "nodes_roles.csv": ROOT / "out" / "nodes_roles.csv",
-        "clusters.csv": ROOT / "out" / "clusters.csv",
-        "top_nodes.csv": ROOT / "out" / "top_nodes.csv",
-        "temporal_matches.csv": ROOT / "out" / "temporal_matches.csv",
-        "bank.sqlite3": ROOT / "database" / "bank.sqlite3",
-    }
-    target = allowed_files.get(filename)
-    if not target or not target.exists():
-        raise HTTPException(status_code=404, detail=f"File '{filename}' not found.")
-
-    media_type = "application/octet-stream"
-    if filename.endswith(".csv"):
-        media_type = "text/csv; charset=utf-8"
-
-    return FileResponse(
-        path=str(target),
-        media_type=media_type,
-        filename=filename,
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
-    )
-
-
 @router.get("/download/review.csv", summary="Download Analyst Review CSV")
 def download_review(gid: List[str] = Query(...)):
     analytics_path = ROOT / "out" / "dashboard.json"
@@ -160,3 +135,74 @@ def serve_case_study():
 def serve_controls_report():
     path = ROOT / "out" / "control" / "REPORT.md"
     return PlainTextResponse(path.read_text(encoding="utf-8"))
+
+
+# Additional local analytics, shared with the standalone dashboard.
+from client_report import load_report, html_report, pdf_report
+from weekly_analytics import compare
+
+@router.get('/api/weekly')
+def weekly(before: Optional[str] = None, after: Optional[str] = None, mode: str = 'daily'):
+    try:
+        report=json.loads((ROOT/'out/weekly.json').read_text(encoding='utf-8'))
+        if before is not None or after is not None:
+            return compare(report,before,after,mode)
+        return {'weeks':[{k:v for k,v in w.items() if k!='clients'} for w in report['weeks']]}
+    except ValueError as e:
+        raise HTTPException(status_code=400,detail=str(e))
+    except OSError:
+        raise HTTPException(status_code=503,detail='Run python run.py first')
+
+@router.get('/report',response_class=HTMLResponse)
+def client_html(gid: str):
+    try:
+        return HTMLResponse(html_report(load_report(ROOT,gid)))
+    except ValueError as e:
+        raise HTTPException(status_code=400,detail=str(e))
+
+@router.get('/download/client.pdf')
+def client_pdf(gid: str):
+    try:
+        data=pdf_report(load_report(ROOT,gid))
+        return Response(data,media_type='application/pdf',headers={'Content-Disposition':f'attachment; filename="client-{gid}.pdf"'})
+    except ValueError as e:
+        raise HTTPException(status_code=400,detail=str(e))
+
+# Named assets only; paths cannot be supplied by the caller.
+def add_asset(url,relative,media):
+    def asset():
+        return FileResponse(str(ROOT/relative),media_type=media)
+    router.add_api_route(url,asset,methods=['GET'],include_in_schema=False)
+
+for url,relative,media in [
+    ('/weekly','weekly.html','text/html'),('/patterns','patterns.html','text/html'),
+    ('/weekly.js','weekly.js','text/javascript'),('/patterns.js','patterns.js','text/javascript'),
+    ('/preferences.js','preferences.js','text/javascript'),('/themes.css','themes.css','text/css'),
+    ('/api/patterns','out/patterns.json','application/json')]:
+    add_asset(url,relative,media)
+
+@router.get("/download/{filename}", summary="Download Export File")
+def download_file(filename: str):
+    allowed_files = {
+        "nodes_roles.csv": ROOT / "out" / "nodes_roles.csv",
+        "clusters.csv": ROOT / "out" / "clusters.csv",
+        "top_nodes.csv": ROOT / "out" / "top_nodes.csv",
+        "temporal_matches.csv": ROOT / "out" / "temporal_matches.csv",
+        "bank.sqlite3": ROOT / "database" / "bank.sqlite3",
+    }
+    target = allowed_files.get(filename)
+    if not target or not target.exists():
+        raise HTTPException(status_code=404, detail=f"File '{filename}' not found.")
+
+    media_type = "application/octet-stream"
+    if filename.endswith(".csv"):
+        media_type = "text/csv; charset=utf-8"
+
+    return FileResponse(
+        path=str(target),
+        media_type=media_type,
+        filename=filename,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
